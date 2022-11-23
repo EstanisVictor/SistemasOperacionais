@@ -10,7 +10,7 @@ while msg.lower() != "sair":
     # recebendo mensagem do servidor
     mensagem = cliente.recv(1024)
 
-    if (mensagem.lower() == "sair"):
+    if (mensagem.decode().lower() == "sair"):
         cliente.close()
 
     print("Servidor respondeu:\n")

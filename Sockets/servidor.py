@@ -15,7 +15,7 @@ while True:
 
     msg_cliente = "".encode()
 
-    while msg_cliente.decode() != "-1":
+    while msg_cliente.decode().lower() != "sair":
         mensagem = input("Digite...: ")
         # enviando mensagem para o cliente
         cliente.send(mensagem.encode())
@@ -25,7 +25,7 @@ while True:
         print("            C2 respondeu:")
         print("           ", msg_cliente.decode())
 
-    if (msg_cliente.decode() == "-1"):
+    if (msg_cliente.decode().lower() == "sair"):
         cliente.close()
         # netstat -ano | findstr 2222
         # taskkill /f /pid <PID>
