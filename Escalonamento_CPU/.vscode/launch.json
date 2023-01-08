@@ -8,8 +8,8 @@
       "args": [],
       "stopAtEntry": false,
       "externalConsole": true,
-      "cwd": "c:/Users/victo/Documents/C++/Processos",
-      "program": "c:/Users/victo/Documents/C++/Processos/build/Debug/outDebug",
+      "cwd": "c:/Users/victo/Documents/RepositorioGit/SistemasOperacionais/Escalonamento_CPU",
+      "program": "c:/Users/victo/Documents/RepositorioGit/SistemasOperacionais/Escalonamento_CPU/build/Debug/outDebug",
       "MIMode": "gdb",
       "miDebuggerPath": "gdb",
       "setupCommands": [

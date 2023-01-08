@@ -42,7 +42,7 @@ void fcfs(vector<Processo *> processos)
             cout << "-----------------------------------------------------------------" << endl;
             cout << "*****************************************************************" << endl;
             cout << "Processo " << processoAtual->nome << " vai interromper aos " << execProcesso << "s" << endl;
-            cout << "Esta interrompido por " << duracao << "s" << endl;
+            cout << "Vai ficar interrompido por " << duracao << "s" << endl;
             cout << "*****************************************************************" << endl;
 
             Processo *processo_salvo = new Processo(processoAtual->nome, processoAtual->tempo_exec - execProcesso,
@@ -78,6 +78,85 @@ void fcfs(vector<Processo *> processos)
 
 void sjf(vector<Processo *> processos)
 {
+    int execProcesso = 0, tempo_atual = 0;
+    sort(processos.begin(), processos.end(), ordenaMenorTempo);
+
+    cout << "                         SJF" << endl;
+    printTempoExec(processos);
+
+    while (!processos.empty())
+    {
+        Processo *processoAtual = processos.front();
+        processos.erase(processos.begin());
+        sort(processos.begin(), processos.end(), ordenaMenorTempo);
+
+        if (processoAtual->tem_interrupcao)
+        {
+            execProcesso = retorna_tempo_exec(processoAtual->tempo_exec);
+
+            int duracao = 0, volta = 0;
+
+            srand(time(NULL));
+            while (duracao == 0)
+            {
+                if (processoAtual->tempo_exec <= 10)
+                {
+                    duracao = rand() % 10;
+                }
+                else if (processoAtual->tempo_exec > 10 && processoAtual->tempo_exec <= 50)
+                {
+                    duracao = rand() % 50;
+                }
+                else
+                {
+                    duracao = rand() % 100;
+                }
+            }
+
+            if (tempo_atual == 0)
+            {
+                volta = duracao + tempo_atual + execProcesso;
+            }
+            else
+            {
+                volta = duracao + tempo_atual;
+            }
+
+            cout << "-----------------------------------------------------------------" << endl;
+            cout << "*****************************************************************" << endl;
+            cout << "Processo " << processoAtual->nome << " vai interromper apos " << execProcesso << "s de sua execucao" << endl;
+            cout << "Vai ficar interrompido por " << duracao << "s" << endl;
+            cout << "Vai retornar aos " << volta << "s" << endl;
+            cout << "*****************************************************************" << endl;
+
+            Processo *processo_salvo = new Processo(processoAtual->nome, processoAtual->tempo_exec - execProcesso,
+                                                    processoAtual->tempo_chegada, processoAtual->tempo_gasto, false,
+                                                    true, volta);
+            processos.push_back(processo_salvo);
+        }
+        else
+        {
+            execProcesso = processoAtual->tempo_exec;
+        }
+        if (tempo_atual < processoAtual->momento_volta && processoAtual->esta_interrompido)
+        {
+            cout << "-----------------------------------------------------------------" << endl;
+            cout << "CPU entra em estado de ocioso aos " << tempo_atual << endl;
+            printCounter(processoAtual->momento_volta - tempo_atual, tempo_atual);
+            cout << "\nTerminou em: " << tempo_atual << endl;
+
+            cout << "-----------------------------------------------------------------" << endl;
+            cout << processoAtual->nome << " comeca a executar no tempo: " << tempo_atual << endl;
+            printCounter(execProcesso, tempo_atual);
+        }
+        else
+        {
+            cout << "-----------------------------------------------------------------" << endl;
+            cout << processoAtual->nome << " comeca a executar no tempo: " << tempo_atual << endl;
+            printCounter(execProcesso, tempo_atual);
+        }
+        cout << "\nTerminou em: " << tempo_atual << endl;
+    }
 }
 
 void srt(vector<Processo *> processos)
@@ -176,7 +255,7 @@ void srt(vector<Processo *> processos)
                 }
 
                 cout << "*****************************************************************" << endl;
-                cout << "Processo esta interrompido por " << duracao << "s" << endl;
+                cout << "Vai ficar interrompido por " << duracao << "s" << endl;
                 cout << "Processo vai retornar aos " << tempo_atual + duracao << "s" << endl;
                 cout << "*****************************************************************" << endl;
 
@@ -195,6 +274,145 @@ void srt(vector<Processo *> processos)
     cout << "Tempo total: " << tempo_atual << "s" << endl;
 }
 
+void duling_nao_preemptivo(vector<Processo *> processos)
+{
+    cout << "                       DULING" << endl;
+    sort(processos.begin(), processos.end(), ordenaMaiorTempo);
+
+    int tempo_atual = 0, execProcesso = 0;
+
+    while (!processos.empty())
+    {
+        Processo *processoAtual = processos.front();
+        processos.erase(processos.begin());
+        sort(processos.begin(), processos.end(), ordenaMaiorTempo);
+
+        if (processoAtual->tem_interrupcao)
+        {
+            execProcesso = retorna_tempo_exec(processoAtual->tempo_exec);
+
+            int duracao = 0, volta = 0;
+
+            srand(time(NULL));
+            while (duracao == 0)
+            {
+                if (processoAtual->tempo_exec <= 10)
+                {
+                    duracao = rand() % 10;
+                }
+                else if (processoAtual->tempo_exec > 10 && processoAtual->tempo_exec <= 50)
+                {
+                    duracao = rand() % 50;
+                }
+                else
+                {
+                    duracao = rand() % 100;
+                }
+            }
+
+            if (tempo_atual == 0)
+            {
+                volta = duracao + tempo_atual + execProcesso;
+            }
+            else
+            {
+                volta = duracao + tempo_atual;
+            }
+
+            cout << "-----------------------------------------------------------------" << endl;
+            cout << "*****************************************************************" << endl;
+            cout << "Processo " << processoAtual->nome << " vai interromper apos " << execProcesso << "s de sua execucao" << endl;
+            cout << "Vai ficar interrompido por " << duracao << "s" << endl;
+            cout << "Vai retornar aos " << volta << "s" << endl;
+            cout << "*****************************************************************" << endl;
+
+            Processo *processo_salvo = new Processo(processoAtual->nome, processoAtual->tempo_exec - execProcesso,
+                                                    processoAtual->tempo_chegada, processoAtual->tempo_gasto, false,
+                                                    true, volta);
+            processos.push_back(processo_salvo);
+        }
+        else
+        {
+            execProcesso = processoAtual->tempo_exec;
+        }
+        if (tempo_atual < processoAtual->momento_volta && processoAtual->esta_interrompido)
+        {
+            cout << "-----------------------------------------------------------------" << endl;
+            cout << "CPU entra em estado de ocioso aos " << tempo_atual << endl;
+            printCounter(processoAtual->momento_volta - tempo_atual, tempo_atual);
+            cout << "\nTerminou em: " << tempo_atual << endl;
+
+            cout << "-----------------------------------------------------------------" << endl;
+            cout << processoAtual->nome << " comeca a executar no tempo: " << tempo_atual << endl;
+            printCounter(execProcesso, tempo_atual);
+        }
+        else
+        {
+            cout << "-----------------------------------------------------------------" << endl;
+            cout << processoAtual->nome << " comeca a executar no tempo: " << tempo_atual << endl;
+            printCounter(execProcesso, tempo_atual);
+        }
+        cout << "\nTerminou em: " << tempo_atual << endl;
+    }
+}
+
+void round_robin_process(vector<Processo *> processos)
+{
+    cout << "                   ROUND ROBIN" << endl;
+    int tempo_atual = 0, quantum = 2;
+    srand(time(NULL));
+
+    // while (quantum == 0)
+    // {
+    //     quantum = rand() % 10;
+    // }
+
+    while (!processos.empty())
+    {
+        Processo *processoAtual = processos.front();
+        processos.erase(processos.begin());
+        int quantidade_exec = 0;
+
+        if (processoAtual->tempo_exec > 0)
+        {
+            if (processoAtual->tempo_exec - quantum < 0)
+            {
+                quantidade_exec = (processoAtual->tempo_exec - quantum) * (-1);
+                processoAtual->tempo_exec = processoAtual->tempo_exec - quantidade_exec;
+                Processo *processoSalvo = verifica_interrupcao(processoAtual, quantidade_exec, tempo_atual);
+                processos.push_back(processoSalvo);
+            }
+            else
+            {
+                quantidade_exec = quantum;
+                processoAtual->tempo_exec = processoAtual->tempo_exec - quantidade_exec;
+                Processo *processoSalvo = verifica_interrupcao(processoAtual, quantidade_exec, tempo_atual);
+                processos.push_back(processoSalvo);
+            }
+
+            if (tempo_atual < processoAtual->momento_volta && processoAtual->esta_interrompido)
+            {
+                cout << "-----------------------------------------------------------------" << endl;
+                cout << "CPU entra em estado de ocioso aos " << tempo_atual << endl;
+                printCounter(processoAtual->momento_volta - tempo_atual, tempo_atual);
+                cout << "\nTerminou em: " << tempo_atual << endl;
+
+                cout << "-----------------------------------------------------------------" << endl;
+                cout << processoAtual->nome << " comeca a executar no tempo: " << tempo_atual << endl;
+                printCounter(quantidade_exec, tempo_atual);
+            }
+            else
+            {
+                cout << "-----------------------------------------------------------------" << endl;
+                cout << processoAtual->nome << " comeca a executar no tempo: " << tempo_atual << endl;
+                printCounter(quantidade_exec, tempo_atual);
+            }
+            cout << "\nEsta faltando " << processoAtual->tempo_exec << "s de execucao";
+            cout << "\nTerminou em: " << tempo_atual << endl;
+        }
+    }
+}
+
 int main()
 {
     vector<Processo *> processos;
@@ -203,8 +421,11 @@ int main()
     processos.push_back(new Processo("P2", 5, 0, 0, false, false, 0));
     processos.push_back(new Processo("P3", 7, 0, 0, false, false, 0));
 
-    fcfs(processos);
+    // fcfs(processos);
     // srt(processos);
+    // sjf(processos);
+    // duling_nao_preemptivo(processos);
+    round_robin_process(processos);
 
     return 0;
 }

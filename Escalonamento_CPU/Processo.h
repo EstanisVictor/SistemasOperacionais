@@ -46,6 +46,11 @@ bool ordenaMenorTempo(Processo *p1, Processo *p2)
     return p1->getTime() < p2->getTime();
 }
 
+bool ordenaMaiorTempo(Processo *p1, Processo *p2)
+{
+    return p1->getTime() > p2->getTime();
+}
+
 int aloca_processos(vector<Processo *> processos, int *tempo_atual)
 {
     for (int i = 0; i < processos.size(); i++)
@@ -98,5 +103,43 @@ void printTempoExec(vector<Processo *> processos)
     for (const auto &p : processos)
     {
         cout << p->nome << " --> Tempo de execucao: " << p->tempo_exec << endl;
+    }
+}
+
+Processo* verifica_interrupcao(Processo *processoAtual, int quantidade_exec, int &tempo_atual)
+{
+    if (processoAtual->tem_interrupcao)
+    {
+        int duracao = 0, volta = 0;
+
+        srand(time(NULL));
+        while (duracao == 0)
+        {
+            duracao = rand() % 10;
+        }
+
+        if (tempo_atual == 0)
+        {
+            volta = duracao + tempo_atual + quantidade_exec;
+        }
+        else
+        {
+            volta = duracao + tempo_atual;
+        }
+
+        cout << "-----------------------------------------------------------------" << endl;
+        cout << "*****************************************************************" << endl;
+        cout << "Processo " << processoAtual->nome << " vai interromper apos " << quantidade_exec << "s de sua execucao" << endl;
+        cout << "Vai ficar interrompido por " << duracao << "s" << endl;
+        cout << "Vai retornar aos " << volta << "s" << endl;
+        cout << "*****************************************************************" << endl;
+        Processo *processo_salvo = new Processo(processoAtual->nome, processoAtual->tempo_exec,
+                                                processoAtual->tempo_chegada, processoAtual->tempo_gasto, false,
+                                                true, volta);
+        return processo_salvo;
+    }
+    else
+    {
+        return processoAtual;
     }
 }
