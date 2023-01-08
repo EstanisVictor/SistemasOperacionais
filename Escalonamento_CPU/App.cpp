@@ -163,6 +163,7 @@ void srt(vector<Processo *> processos)
 {
     cout << "                         SRT" << endl;
     sort(processos.begin(), processos.end(), ordenaMenorTempo);
+    printTempoExec(processos);
     int tempo_atual = 0;
     int contadorEstadoOcioso = 1;
 
@@ -176,17 +177,12 @@ void srt(vector<Processo *> processos)
 
         if (processo_atual->esta_interrompido && processo_atual->momento_volta > tempo_atual)
         {
-            cout << "\rOcioso: " << contadorEstadoOcioso << "s";
+            cout << "Ocioso: " << tempo_atual << "s" << endl;
             sleep(1);
 
             tempo_atual++;
             processos.push_back(processo_atual);
             contadorEstadoOcioso++;
-
-            if (tempo_atual == processo_atual->momento_volta)
-            {
-                cout << endl;
-            }
 
             continue;
         }
@@ -418,14 +414,14 @@ int main()
     vector<Processo *> processos;
 
     processos.push_back(new Processo("P1", 4, 0, 0, true, false, 0));
-    processos.push_back(new Processo("P2", 5, 0, 0, false, false, 0));
-    processos.push_back(new Processo("P3", 7, 0, 0, false, false, 0));
+    processos.push_back(new Processo("P2", 5, 0, 0, true, false, 0));
+    processos.push_back(new Processo("P3", 7, 0, 0, true, false, 0));
 
     // fcfs(processos);
-    // srt(processos);
     // sjf(processos);
+    srt(processos);
     // duling_nao_preemptivo(processos);
-    round_robin_process(processos);
+    // round_robin_process(processos);
 
     return 0;
 }
