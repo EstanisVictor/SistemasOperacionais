@@ -82,3 +82,21 @@ int retorna_tempo_exec(int tempo)
         return 1;
     }
 }
+
+void printCounter(int counter, int &tempo_atual)
+{
+    for (int i = 1; i <= counter; i++)
+    {
+        cout << "\rExecutando: " << i << "s";
+        sleep(1);
+        tempo_atual++;
+    }
+}
+
+void printTempoExec(vector<Processo *> processos)
+{
+    for (const auto &p : processos)
+    {
+        cout << p->nome << " --> Tempo de execucao: " << p->tempo_exec << endl;
+    }
+}

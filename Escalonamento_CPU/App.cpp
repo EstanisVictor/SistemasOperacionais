@@ -4,10 +4,85 @@
 
 using namespace std;
 
+void fcfs(vector<Processo *> processos)
+{
+    int execProcesso = 0, tempo_atual = 0;
 
+    cout << "                         FCFS" << endl;
+    printTempoExec(processos);
+
+    while (!processos.empty())
+    {
+        Processo *processoAtual = processos.front();
+        processos.erase(processos.begin());
+
+        if (processoAtual->tem_interrupcao)
+        {
+            execProcesso = retorna_tempo_exec(processoAtual->tempo_exec);
+
+            int duracao = 0;
+
+            srand(time(NULL));
+            while (duracao == 0)
+            {
+                if (processoAtual->tempo_exec <= 10)
+                {
+                    duracao = rand() % 10;
+                }
+                else if (processoAtual->tempo_exec > 10 && processoAtual->tempo_exec <= 50)
+                {
+                    duracao = rand() % 50;
+                }
+                else
+                {
+                    duracao = rand() % 100;
+                }
+            }
+
+            cout << "-----------------------------------------------------------------" << endl;
+            cout << "*****************************************************************" << endl;
+            cout << "Processo " << processoAtual->nome << " vai interromper aos " << execProcesso << "s" << endl;
+            cout << "Esta interrompido por " << duracao << "s" << endl;
+            cout << "*****************************************************************" << endl;
+
+            Processo *processo_salvo = new Processo(processoAtual->nome, processoAtual->tempo_exec - execProcesso,
+                                                    processoAtual->tempo_chegada, processoAtual->tempo_gasto, false,
+                                                    true, tempo_atual + duracao);
+
+            processos.push_back(processo_salvo);
+        }
+        else
+        {
+            execProcesso = processoAtual->tempo_exec;
+        }
+
+        if (tempo_atual < processoAtual->momento_volta && processoAtual->esta_interrompido)
+        {
+            cout << "-----------------------------------------------------------------" << endl;
+            cout << "CPU em estado de ocioso..." << endl;
+            printCounter(processoAtual->momento_volta - tempo_atual + 1, tempo_atual);
+
+            cout << "\n-----------------------------------------------------------------" << endl;
+            cout << processoAtual->nome << " comeca a executar no tempo: " << tempo_atual << endl;
+            printCounter(execProcesso, tempo_atual);
+        }
+        else
+        {
+            cout << "-----------------------------------------------------------------" << endl;
+            cout << processoAtual->nome << " comeca a executar no tempo: " << tempo_atual << endl;
+            printCounter(execProcesso, tempo_atual);
+        }
+        cout << "\nTerminou em: " << tempo_atual << endl;
+    }
+}
+
+void sjf(vector<Processo *> processos)
+{
+}
 
 void srt(vector<Processo *> processos)
 {
+    cout << "                         SRT" << endl;
     sort(processos.begin(), processos.end(), ordenaMenorTempo);
     int tempo_atual = 0;
     int contadorEstadoOcioso = 1;
@@ -124,11 +199,12 @@ int main()
 {
     vector<Processo *> processos;
 
-    processos.push_back(new Processo("P1", 6, 0, 0, false, false, 0));
-    processos.push_back(new Processo("P2", 5, 0, 0, true, false, 0));
+    processos.push_back(new Processo("P1", 4, 0, 0, true, false, 0));
+    processos.push_back(new Processo("P2", 5, 0, 0, false, false, 0));
     processos.push_back(new Processo("P3", 7, 0, 0, false, false, 0));
 
-    srt(processos);
+    fcfs(processos);
+    // srt(processos);
 
     return 0;
 }
