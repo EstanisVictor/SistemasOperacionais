@@ -201,12 +201,16 @@ void srt(vector<Processo *> processos)
         if (processo_atual->tempo_gasto > 0)
         {
             cout << "-----------------------------------------------------------------" << endl;
+            cout << processo_atual->nome << " volta no tempo: " << tempo_atual << endl;
+        }
+        else
+        {
+            cout << "-----------------------------------------------------------------" << endl;
             cout << processo_atual->nome << " comeca a executar no tempo: " << tempo_atual << endl;
         }
 
         for (size_t tempo = processo_atual->tempo_gasto; tempo <= processo_atual->tempo_exec; tempo++)
         {
-            sort(processos.begin(), processos.end(), ordenaMenorTempo);
 
             int indiceProcessoMenorTempo = aloca_processos_menor_tempo(processos, &tempo_atual, processo_atual, tempo);
 
@@ -221,17 +225,15 @@ void srt(vector<Processo *> processos)
                 break;
             }
 
-            if (tempo == 0)
+            if (tempo == processo_atual->tempo_gasto)
             {
-                cout << "-----------------------------------------------------------------" << endl;
-                cout << processo_atual->nome << " comeca a executar no tempo: " << tempo_atual << endl;
                 tempo_atual++;
                 continue;
             }
 
             if (tempo == processo_atual->tempo_exec)
             {
-                cout << "\rExecutando: " << tempo << "s" << endl;
+                cout << "Executando: " << tempo << "s" << endl;
                 sleep(1);
                 cout << "Processo " << processo_atual->nome << " terminou em " << tempo_atual << endl;
                 continue;
@@ -239,7 +241,7 @@ void srt(vector<Processo *> processos)
 
             if (processo_atual->tem_interrupcao && tempo == retorna_tempo_exec(processo_atual->tempo_exec))
             {
-                cout << "\rExecutando: " << tempo << "s" << endl;
+                cout << "Executando: " << tempo << "s" << endl;
                 sleep(1);
 
                 int duracao = 0;
@@ -252,7 +254,7 @@ void srt(vector<Processo *> processos)
 
                 cout << "*****************************************************************" << endl;
                 cout << "Vai ficar interrompido por " << duracao << "s" << endl;
-                cout << "Processo vai retornar aos " << tempo_atual + duracao << "s" << endl;
+                cout << "Processo pode retornar a partir dos " << tempo_atual + duracao << "s" << endl;
                 cout << "*****************************************************************" << endl;
 
                 Processo *processo_salvo = new Processo(processo_atual->nome, processo_atual->tempo_exec,
@@ -262,7 +264,7 @@ void srt(vector<Processo *> processos)
 
                 break;
             }
-            cout << "\rExecutando: " << tempo << "s";
+            cout << "Executando: " << tempo << "s" << endl;
             sleep(1);
             tempo_atual++;
         }
@@ -274,7 +276,7 @@ void duling_nao_preemptivo(vector<Processo *> processos)
 {
     cout << "                       DULING" << endl;
     sort(processos.begin(), processos.end(), ordenaMaiorTempo);
-
+    printTempoExec(processos);
     int tempo_atual = 0, execProcesso = 0;
 
     while (!processos.empty())
@@ -355,13 +357,15 @@ void duling_nao_preemptivo(vector<Processo *> processos)
 void round_robin_process(vector<Processo *> processos)
 {
     cout << "                   ROUND ROBIN" << endl;
-    int tempo_atual = 0, quantum = 2;
+    int tempo_atual = 0, quantum = 0;
     srand(time(NULL));
 
-    // while (quantum == 0)
-    // {
-    //     quantum = rand() % 10;
-    // }
+    while (quantum == 0)
+    {
+        quantum = rand() % 10;
+    }
+
+    printTempoExec(processos);
 
     while (!processos.empty())
     {
@@ -414,8 +418,8 @@ int main()
     vector<Processo *> processos;
 
     processos.push_back(new Processo("P1", 4, 0, 0, true, false, 0));
-    processos.push_back(new Processo("P2", 5, 0, 0, true, false, 0));
-    processos.push_back(new Processo("P3", 7, 0, 0, true, false, 0));
+    processos.push_back(new Processo("P2", 5, 0, 0, false, false, 0));
+    processos.push_back(new Processo("P3", 7, 0, 0, false, false, 0));
 
     // fcfs(processos);
     // sjf(processos);

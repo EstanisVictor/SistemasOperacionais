@@ -106,7 +106,7 @@ void printTempoExec(vector<Processo *> processos)
     }
 }
 
-Processo* verifica_interrupcao(Processo *processoAtual, int quantidade_exec, int &tempo_atual)
+Processo *verifica_interrupcao(Processo *processoAtual, int quantidade_exec, int &tempo_atual)
 {
     if (processoAtual->tem_interrupcao)
     {
