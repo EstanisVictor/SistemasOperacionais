@@ -10,5 +10,5 @@
 <hr>
 <h2>Escalonamento de CPU</h2>
 <p>
-Fazendo os tipos diferentes de escalonamento de CPU para azer a execução dos processos, introduzindo a cada um sua característica específica
+Fazendo os tipos diferentes de escalonamento de CPU para fazer a execução dos processos, introduzindo a cada um sua característica específica
 </p>
