@@ -11,16 +11,18 @@ public:
     bool tem_interrupcao;
     bool esta_interrompido;
     int momento_volta;
+    int prioridade;
 
-    Processo(string name, int tempo_exec, int tempo_chegada, int tempo_gasto, bool tem_interrupcao, bool esta_interrompido, int momento_volta);
+    Processo(string name, int tempo_exec, int tempo_chegada, int tempo_gasto, bool tem_interrupcao, bool esta_interrompido, int momento_volta, int prioridade);
 
     void imprimir();
     bool ordenaMenorTempo(Processo *p1, Processo *p2);
     int getTime() const;
+    int getPrioridade() const;
     void setTempoGasto(int tempo_gasto);
 };
 
-Processo::Processo(string name, int tempo_exec, int tempo_chegada, int tempo_gasto, bool tem_interrupcao, bool esta_interrompido, int momento_volta)
+Processo::Processo(string name, int tempo_exec, int tempo_chegada, int tempo_gasto, bool tem_interrupcao, bool esta_interrompido, int momento_volta, int prioridade)
 {
     this->nome = name;
     this->tempo_exec = tempo_exec;
@@ -29,11 +31,17 @@ Processo::Processo(string name, int tempo_exec, int tempo_chegada, int tempo_gas
     this->tem_interrupcao = tem_interrupcao;
     this->esta_interrompido = esta_interrompido;
     this->momento_volta = momento_volta;
+    this->prioridade = prioridade;
 }
 
 int Processo::getTime() const
 {
     return tempo_exec;
+}
+
+int Processo::getPrioridade() const
+{
+    return prioridade;
 }
 
 void Processo::setTempoGasto(int tempo_gasto)
@@ -46,9 +54,9 @@ bool ordenaMenorTempo(Processo *p1, Processo *p2)
     return p1->getTime() < p2->getTime();
 }
 
-bool ordenaMaiorTempo(Processo *p1, Processo *p2)
+bool ordenaMaiorPrioridade(Processo *p1, Processo *p2)
 {
-    return p1->getTime() > p2->getTime();
+    return p1->getPrioridade() < p2->getPrioridade();
 }
 
 int aloca_processos(vector<Processo *> processos, int *tempo_atual)
@@ -69,6 +77,19 @@ int aloca_processos_menor_tempo(vector<Processo *> processos, int *tempo_atual, 
     {
         if (processos[i]->tempo_chegada < *tempo_atual && processos[i]->momento_volta <= *tempo_atual &&
             (processos[i]->tempo_exec - processos[i]->tempo_gasto) < (processo_atual->tempo_exec - tempo))
+        {
+            return i;
+        }
+    }
+    return -1;
+}
+
+int aloca_processos_menor_prioridade(vector<Processo *> processos, int *tempo_atual, Processo *processo_atual, int tempo)
+{
+    for (int i = 0; i < processos.size(); i++)
+    {
+        if (processos[i]->tempo_chegada < *tempo_atual && processos[i]->momento_volta <= *tempo_atual &&
+            processos[i]->prioridade < processo_atual->prioridade)
         {
             return i;
         }
@@ -135,7 +156,7 @@ Processo *verifica_interrupcao(Processo *processoAtual, int quantidade_exec, int
         cout << "*****************************************************************" << endl;
         Processo *processo_salvo = new Processo(processoAtual->nome, processoAtual->tempo_exec,
                                                 processoAtual->tempo_chegada, processoAtual->tempo_gasto, false,
-                                                true, volta);
+                                                true, volta, processoAtual->prioridade);
         return processo_salvo;
     }
     else
