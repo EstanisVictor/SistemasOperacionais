@@ -34,30 +34,31 @@ string current_working_directory()
 
 int main()
 {
-    string comand = "", directory = current_working_directory();
+    string command = "", directory = current_working_directory();
     vector<string> tokens;
-    while (comand != "exit")
+
+    while (true)
     {
         cout << GREEN << "\nuser@ " << MAGENTA << "SHELL " << YELLOW << directory << endl;
         cout << WHITE << "/> ";
-        getline(cin, comand);
-        tokens = tokenize(comand, " ");
+        getline(cin, command);
+        tokens = tokenize(command, " ");
 
-        if (comand == "dir")
+        if (command == "dir")
         {
-            system(comand.c_str());
+            system(command.c_str());
         }
-        else if (comand == "ls")
+        else if (command == "ls")
         {
-            system(comand.c_str());
+            system(command.c_str());
         }
         else if (tokens[0] == "cat")
         {
-            system(comand.c_str());
+            system(command.c_str());
         }
         else if (tokens[0] == "mkdir")
         {
-            system(comand.c_str());
+            system(command.c_str());
         }
         else if (tokens[0] == "cd")
         {
@@ -66,8 +67,12 @@ int main()
         }
         else if (tokens[0] == "rm")
         {
-            system(comand.c_str());
+            system(command.c_str());
+        }
+        else if (command == "exit")
+        {
+            system("taskkill /im bash.exe /f");
+            return 0;
         }
     }
-    return 0;
 }
