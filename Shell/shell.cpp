@@ -1,7 +1,6 @@
 #include <bits/stdc++.h>
-#include <windows.h>
-#include <conio.h>
 #include <dirent.h>
+#include <unistd.h>
 
 #define YELLOW "\e[0;33m"
 #define WHITE "\e[0;37m"
@@ -26,9 +25,9 @@ vector<string> tokenize(string s, string del = " ")
 
 string current_working_directory()
 {
-    char *cwd = _getcwd(0, 0); // **** microsoft specific ****
+    char cwd[1024];
+    getcwd(cwd, sizeof(cwd));
     string working_directory(cwd);
-    free(cwd);
     return working_directory;
 }
 
@@ -44,35 +43,50 @@ int main()
         getline(cin, command);
         tokens = tokenize(command, " ");
 
-        if (command == "dir")
+        if (tokens[0] == "dir" || tokens[0] == "ls")
         {
-            system(command.c_str());
-        }
-        else if (command == "ls")
-        {
-            system(command.c_str());
+            #ifdef _WIN32
+                system(("dir " + tokens[1]).c_str());
+            #else
+                system(("ls " + tokens[1]).c_str());
+            #endif
         }
         else if (tokens[0] == "cat")
         {
-            system(command.c_str());
+            system(("cat " + tokens[1]).c_str());
         }
         else if (tokens[0] == "mkdir")
         {
-            system(command.c_str());
+            system(("mkdir " + tokens[1]).c_str());
         }
         else if (tokens[0] == "cd")
         {
-            SetCurrentDirectoryA(tokens[1].c_str());
+            chdir(tokens[1].c_str());
             directory = current_working_directory();
         }
         else if (tokens[0] == "rm")
         {
-            system(command.c_str());
+            system(("rm " + tokens[1]).c_str());
         }
         else if (command == "exit")
         {
-            system("taskkill /im bash.exe /f");
             return 0;
+        }
+        else if (tokens[0] == "cp")
+        {
+            #ifdef _WIN32
+                system(("copy " + tokens[1] + " " + tokens[2]).c_str());
+            #else
+                system(("cp " + tokens[1] + " " + tokens[2]).c_str());
+            #endif
+        }
+        else if (tokens[0] == "mv")
+        {
+            #ifdef _WIN32
+                system(("move " + tokens[1] + " " + tokens[2]).c_str());
+            #else
+                system(("mv " + tokens[1] + " " + tokens[2]).c_str());
+            #endif
         }
     }
 }
